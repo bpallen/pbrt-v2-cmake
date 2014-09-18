@@ -56,7 +56,10 @@
 		extern "C" void _ReadWriteBarrier();
 		#pragma intrinsic(_ReadWriteBarrier)
 	#else
+		// fix mingw build (warning spam)
+		#ifndef _ReadWriteBarrier
 		#define _ReadWriteBarrier()
+		#endif
 	#endif
 
 	typedef volatile LONG AtomicInt32;

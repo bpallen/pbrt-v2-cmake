@@ -1,7 +1,8 @@
 // header file for building precompiled headers under windows
 // a no-op on other architectures
  
-#if defined(_MSC_VER)
+// fix mingw build: fileutil (and maybe others?) rely on this header to define PBRT_IS_WINDOWS
+//#if defined(_MSC_VER)
 
 #include "pbrt.h"
 #include "camera.h"
@@ -13,4 +14,4 @@
 #include "texture.h"
 #include "integrator.h"
 
-#endif // _MSC_VER
+//#endif // _MSC_VER

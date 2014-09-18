@@ -84,11 +84,18 @@ using std::max;
 using std::swap;
 using std::sort;
 
+
 // Platform-specific definitions
 #if defined(PBRT_IS_WINDOWS)
 #include <float.h>
+// fix mingw build
+#ifdef __MINGW32__
+using std::isnan;
+using std::isinf;
+#else
 #define isnan _isnan
 #define isinf(f) (!_finite((f)))
+#endif
 #if _MSC_VER >= 1600
 #include <stdint.h>
 #else
@@ -101,18 +108,21 @@ typedef unsigned __int32 uint32_t;
 typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #endif // _MSC_VER >= 1600
+// fix mingw build (warning spam) - guard msvc only pragmas
+#ifdef _MSC_VER
 #pragma warning (disable : 4305) // double constant assigned to float
 #pragma warning (disable : 4244) // int -> float conversion
 #pragma warning (disable : 4267) // size_t -> unsigned int conversion
+#endif
 #endif
 
 #if defined(PBRT_IS_LINUX) || defined(PBRT_IS_APPLE)
 #include <stdint.h>
 #endif // PBRT_IS_LINUX || PBRT_IS_APPLE
-#if defined(PBRT_IS_WINDOWS)
-#define isnan _isnan
-#define isinf(f) (!_finite((f)))
-#endif
+//#if defined(PBRT_IS_WINDOWS)
+//#define isnan _isnan
+//#define isinf(f) (!_finite((f)))
+//#endif
 
 // Global Macros
 #define ALLOCA(TYPE, COUNT) (TYPE *)alloca((COUNT) * sizeof(TYPE))
@@ -202,7 +212,10 @@ class VolumeIntegrator;
 #define INFINITY FLT_MAX
 #endif
 #if defined(PBRT_IS_WINDOWS)
+// fix mingw build (warning spam) (applies to msvc too as it happens)
+#ifndef alloca
 #define alloca _alloca
+#endif
 #endif
 #ifndef PBRT_L1_CACHE_LINE_SIZE
 #define PBRT_L1_CACHE_LINE_SIZE 64
