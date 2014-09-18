@@ -36,7 +36,8 @@
 
 #ifdef __GNUC__
 #if (__GNUC__ == 4) && (__GNUC_MINOR__ == 8) && (__GNUC_PATCHLEVEL__ == 2)
-#error "You're compiling with g++ version 4.8.2, which has a tragic bug in std::nth_element, which in turn causes crashes in pbrt  (http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58800). Please upgrade your version of g++"
+// this is correct, but uni g++ is 4.8.2 with a patch that fixes this
+//#error "You're compiling with g++ version 4.8.2, which has a tragic bug in std::nth_element, which in turn causes crashes in pbrt  (http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58800). Please upgrade your version of g++"
 #endif // 4.8.2 borkage
 #endif // __GNUC__
 
