@@ -1,18 +1,25 @@
-project(pbrt-comp408 CXX)
+project(pbrt-comp408 CXX C)
 cmake_minimum_required(VERSION 2.8)
 
 # tiff seems not to be used in the renderer itself, so is excluded from this cmake
 
 # compiler flags 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-	# Force to always compile with W4
+	# Force to always compile with W3
 	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-		string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+		string(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 	else()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
 	endif()
 	# turn on parallel build
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+	
+	# fix some shit?
+	add_definitions(
+		-DZLIB_WINAPI
+		-D_CRT_SECURE_NO_WARNINGS
+	)
+	
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Werror=return-type -pedantic -std=c++11 -g")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
