@@ -7,5 +7,6 @@ PBRT for COMP 408
 =================
 
 This is just the PBRT renderer (no tools / exporters), with a CMake build system.
-The `cmake` branch has the CMake and unmodified pbrt-v2 source.
 
+The `cmake` branch has the CMake and unmodified pbrt-v2 source.
+Other branches have my assignment in them.
