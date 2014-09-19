@@ -41,6 +41,8 @@
 #include "IlmThreadMutex.h"
 #include "Iex.h"
 
+#ifdef _WIN32
+
 namespace IlmThread {
 
 
@@ -71,3 +73,5 @@ Mutex::unlock () const
 
 
 } // namespace IlmThread
+
+#endif

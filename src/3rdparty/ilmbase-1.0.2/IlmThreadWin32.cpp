@@ -44,6 +44,8 @@
 #include <iostream>
 #include <assert.h>
 
+#ifdef _WIN32
+
 namespace IlmThread {
 
 
@@ -93,3 +95,5 @@ Thread::start ()
 
 
 } // namespace IlmThread
+
+#endif

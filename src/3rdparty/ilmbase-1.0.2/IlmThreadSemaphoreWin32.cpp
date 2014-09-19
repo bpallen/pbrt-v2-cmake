@@ -44,6 +44,8 @@
 #include <assert.h>
 #include <iostream>
 
+#ifdef _WIN32
+
 namespace IlmThread {
 
 using namespace Iex;
@@ -144,3 +146,5 @@ Semaphore::value() const
 }
 
 } // namespace IlmThread
+
+#endif
