@@ -75,11 +75,14 @@ file(GLOB volumes_src "src/volumes/*.cpp")
 include_directories(
 	"src"
 	"src/core"
-	"src/3rdparty"
 	"src/3rdparty/ilmbase-1.0.2"
 	"src/3rdparty/openexr-1.7.0"
 	"src/3rdparty/zlib-1.2.5"
 )
+
+if(WIN32)
+	include_directories("src/3rdparty")
+endif()
 
 # preprocessor definitions
 add_definitions(
