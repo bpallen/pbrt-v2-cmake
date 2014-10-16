@@ -40,7 +40,7 @@ file(GLOB openexr_hdr "src/3rdparty/openexr-1.7.0/*.h")
 file(GLOB zlib_hdr "src/3rdparty/zlib-1.2.5/*.h")
 file(GLOB accelerators_hdr "src/accelerators/*.h")
 file(GLOB cameras_hdr "src/cameras/*.h")
-file(GLOB core_hdr "src/core/*.h")
+file(GLOB core_hdr "src/core/*.h" "src/core/*.hh") # *.hh is only used for the parser header
 file(GLOB film_hdr "src/film/*.h")
 file(GLOB filters_hdr "src/filters/*.h")
 file(GLOB integrators_hdr "src/integrators/*.h")
@@ -59,7 +59,7 @@ file(GLOB openexr_src "src/3rdparty/openexr-1.7.0/*.cpp")
 file(GLOB zlib_src "src/3rdparty/zlib-1.2.5/*.c")
 file(GLOB accelerators_src "src/accelerators/*.cpp")
 file(GLOB cameras_src "src/cameras/*.cpp")
-file(GLOB core_src "src/core/*.cpp" "src/core/*.c")
+file(GLOB core_src "src/core/*.cpp" "src/core/*.c" "src/core/*.yy") # *.yy is the parser generator source
 file(GLOB film_src "src/film/*.cpp")
 file(GLOB filters_src "src/filters/*.cpp")
 file(GLOB integrators_src "src/integrators/*.cpp")
@@ -81,6 +81,7 @@ include_directories(
 )
 
 if(WIN32)
+	# for unistd.h replacement
 	include_directories("src/3rdparty")
 endif()
 
@@ -89,6 +90,32 @@ add_definitions(
 	-DPBRT_HAS_OPENEXR
 	-DPBRT_PROBES_NONE
 )
+
+# parser generator
+include(FindBISON REQUIRED)
+# TODO nice way not to require bison
+if(BISON_FOUND)
+	# target to build parser cpp and header
+	# the line directives produced use ABSOLUTE paths atm
+	# bear this in mind if trying to make bison optional
+	bison_target(
+		pbrtparse 
+		"${PROJECT_SOURCE_DIR}/src/core/pbrtparse.yy" 
+		"${PROJECT_BINARY_DIR}/src/core/pbrtparse.cpp"
+		COMPILE_FLAGS "--debug"
+	)
+	# add generated parser to source list
+	set(core_src ${core_src} ${BISON_pbrtparse_OUTPUT_SOURCE})
+	set(core_hdr ${core_hdr} "${PROJECT_BINARY_DIR}/src/core/pbrtparse.hh")
+	# add generated source dir to include dirs
+	include_directories("${PROJECT_BINARY_DIR}/src/core")
+	# copy the generated header to one of a determinate name (also the includes are like that)
+	add_custom_command(
+		OUTPUT "${PROJECT_BINARY_DIR}/src/core/pbrtparse.hh"
+		COMMAND ${CMAKE_COMMAND} -E	copy ${BISON_pbrtparse_OUTPUT_HEADER} "${PROJECT_BINARY_DIR}/src/core/pbrtparse.hh"
+		DEPENDS ${BISON_pbrtparse_OUTPUT_HEADER}
+	)
+endif()
 
 # libpbrt
 add_library(libpbrt
