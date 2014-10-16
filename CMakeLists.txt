@@ -1,4 +1,4 @@
-project(pbrt-comp408 CXX C)
+project(pbrt-v2-cmake CXX C)
 cmake_minimum_required(VERSION 2.8)
 
 # tiff seems not to be used in the renderer itself, so is excluded from this cmake
@@ -59,7 +59,8 @@ file(GLOB openexr_src "src/3rdparty/openexr-1.7.0/*.cpp")
 file(GLOB zlib_src "src/3rdparty/zlib-1.2.5/*.c")
 file(GLOB accelerators_src "src/accelerators/*.cpp")
 file(GLOB cameras_src "src/cameras/*.cpp")
-file(GLOB core_src "src/core/*.cpp" "src/core/*.c" "src/core/*.yy") # *.yy is the parser generator source
+# *.yy is the parser generator source, *.ll is the lexer
+file(GLOB core_src "src/core/*.cpp" "src/core/*.c" "src/core/*.yy" "src/core/*.ll")
 file(GLOB film_src "src/film/*.cpp")
 file(GLOB filters_src "src/filters/*.cpp")
 file(GLOB integrators_src "src/integrators/*.cpp")
@@ -91,24 +92,34 @@ add_definitions(
 	-DPBRT_PROBES_NONE
 )
 
-# parser generator
-include(FindBISON REQUIRED)
-# TODO nice way not to require bison
-if(BISON_FOUND)
-	# target to build parser cpp and header
+# parser/lexer generator
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+# TODO nice way to not to require bison/flex
+if(BISON_FOUND AND FLEX_FOUND)
 	# the line directives produced use ABSOLUTE paths atm
-	# bear this in mind if trying to make bison optional
+	# bear this in mind if trying to make bison/flex optional
+	# target to build parser cpp and header
 	bison_target(
 		pbrtparse 
 		"${PROJECT_SOURCE_DIR}/src/core/pbrtparse.yy" 
 		"${PROJECT_BINARY_DIR}/src/core/pbrtparse.cpp"
 		COMPILE_FLAGS "--debug"
 	)
-	# add generated parser to source list
-	set(core_src ${core_src} ${BISON_pbrtparse_OUTPUT_SOURCE})
+	# target to build lexer cpp
+	flex_target(
+		pbrtlex
+		"${PROJECT_SOURCE_DIR}/src/core/pbrtlex.ll"
+		"${PROJECT_BINARY_DIR}/src/core/pbrtlex.cpp"
+#		COMPILE_FLAGS "-d" # this results in debug spam of some description
+	)
+	# add generated parser and lexer to source list
+	set(core_src ${core_src} ${BISON_pbrtparse_OUTPUT_SOURCE} ${FLEX_pbrtlex_OUTPUTS})
 	set(core_hdr ${core_hdr} "${PROJECT_BINARY_DIR}/src/core/pbrtparse.hh")
 	# add generated source dir to include dirs
 	include_directories("${PROJECT_BINARY_DIR}/src/core")
+	# add the flex dependency on the bison generated header
+	add_flex_bison_dependency(pbrtlex pbrtparse)
 	# copy the generated header to one of a determinate name (also the includes are like that)
 	add_custom_command(
 		OUTPUT "${PROJECT_BINARY_DIR}/src/core/pbrtparse.hh"
