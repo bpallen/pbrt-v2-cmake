@@ -10,8 +10,7 @@ This is just the PBRT renderer (no tools / exporters), with a CMake build system
 
 Bison is required in order to generate the parser.
 
-The `cmake` branch has the CMake and pbrt-v2 source (modified just enough to build nicely).
-Other branches have my assignment in them.
+The `master` branch has the CMake and pbrt-v2 source (modified just enough to build nicely).
 
 Building on Linux
 -----------------
