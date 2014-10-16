@@ -8,7 +8,7 @@ PBRT for COMP 408
 
 This is just the PBRT renderer (no tools / exporters), with a CMake build system.
 
-Bison is required in order to generate the parser.
+Bison and Flex are required in order to generate the parser and lexer.
 
 The `master` branch has the CMake and pbrt-v2 source (modified just enough to build nicely).
 
@@ -31,7 +31,7 @@ Then run like:
 Building on Windows (VS2013, x64)
 ---------------------------------
 
-A (somewhat old but sufficient) version of Bison can be obtained from [here](http://gnuwin32.sourceforge.net/packages/bison.htm). This must be installed to a path without spaces; note that the default does _not_ satisfy this. The binary directory must be added to your path to allow CMake to find the executable.
+Somewhat old but sufficient versions of Bison and Flex can be obtained from [here](http://gnuwin32.sourceforge.net/packages/bison.htm) and [here](http://gnuwin32.sourceforge.net/packages/flex.htm). These must be installed to a path without spaces, e.g. `C:\GnuWin32\`; note that the default does _not_ satisfy this. The binary directory must be added to your path to allow CMake to find the executables.
 
 From repository root, in cmd:
 ```
@@ -41,8 +41,8 @@ cmake .. -G "Visual Studio 12 Win64"
 ```
 
 In VS:
-- Set ```pbrt``` as the startup project
-- Set its working directory to ```$(SolutionDir)..``` (all configs)
-- Set its command arguments to e.g. ```./scenes/bunny.pbrt``` (all configs)
+- Set `pbrt` as the startup project
+- Set its working directory to `$(SolutionDir)..` (all configs)
+- Set its command arguments to e.g. `./scenes/bunny.pbrt` (all configs)
 - Switch to release config, as non-optimized builds will be very slow to render
 
